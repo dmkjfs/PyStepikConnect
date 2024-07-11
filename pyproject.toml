@@ -6,8 +6,15 @@ authors = ["Ilya Kuznetsov <ilkztsff@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
+requests = "^2.32.3"
+wheel = "^0.43.0"
+sdist = "^0.0.0"
+setuptools = "^70.3.0"
 
+[tool.poetry.group.dev.dependencies]
+flake8 = "^7.1.0"
+mypy = "^1.10.1"
 
 [build-system]
 requires = ["poetry-core"]
