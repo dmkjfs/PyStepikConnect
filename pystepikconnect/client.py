@@ -35,7 +35,7 @@ class Stepik:
         """
 
         url = f"{self.base_url}{'/' if path.startswith('') else ''}{path}\
-            ?{(''.join([param + '=' + value + '&' for param, value in params])) if params is not None else ''}"
+            ?{(''.join([param + '=' + value + '&' for param, value in params.items()])) if params is not None else ''}"
         headers = requests.utils.default_headers()
         headers.update({"Authorization": f"Bearer {self.token}"})
 
@@ -145,7 +145,7 @@ class Stepik:
                 "block": {
                     "name": name,
                     "text": text,
-                    "source": poll  
+                    "source": poll
                 },
                 "lesson": lesson_id,
                 "position": 1
