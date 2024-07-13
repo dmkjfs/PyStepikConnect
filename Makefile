@@ -12,7 +12,7 @@ lint:
 	poetry run mypy -p pystepikconnect
 
 fix:
-    poetry run black pystepikconnect
+	poetry run black pystepikconnect
 
 publish:
 	poetry publish --dry-run
