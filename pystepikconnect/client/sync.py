@@ -1,9 +1,9 @@
 import requests
 from typing import List
 
-from pystepikconnect.types import Course, Lesson, Unit, Step
+from pystepikconnect.types import Course, Lesson, Unit, Step, Section
 from pystepikconnect.models import RequestParameters
-from pystepikconnect.core import courses, lessons, steps, units, get_token
+from pystepikconnect.core import courses, lessons, steps, sections, units, get_token
 from pystepikconnect.exceptions import AuthorizationError
 
 
@@ -65,33 +65,107 @@ class Stepik:
         data = self.request(courses.get(token=self.token))
         return list(map(lambda course: Course(**course), data["courses"]))
 
-    def create_course(self):
-        pass
+    def create_course(self, course: Course) -> int:
 
-    def update_course(self):
-        pass
+        """
+        Creates a new course
+
+        :param course: course object
+        :return: new course id
+        """
+
+        data = self.request(courses.create(token=self.token, course=course))
+        return data["courses"][0]["id"]
+
+    def update_course(self, course: Course) -> int:
+
+        """
+        Updates existing course
+
+        :param course: updated course object. **Do not specify step id in it**
+        :return: course id
+        """
+
+        data = self.request(courses.update(token=self.token, course=course))
+        return data["courses"][0]["id"]
+
+    def get_sections(self, course_id: int) -> List[Section]:
+
+        """
+        Gets sections from specified course
+
+        :return: list of courses
+        """
+
+        if not isinstance(course_id, int):
+            raise TypeError("Invalid value for argument")
+
+        data = self.request(sections.get(token=self.token, course_id=course_id))
+        return list(map(lambda section: Section(**section), data["sections"]))
+
+    def create_section(self, section: Section) -> int:
+
+        """
+        Creates a section in course
+
+        :param section: section object
+        :return: new section id
+        """
+
+        data = self.request(sections.create(token=self.token, section=section))
+        return data["sections"][0]["id"]
+
+    def update_section(self, section: Section) -> int:
+
+        """
+        Updates existing section
+
+        :param section: updated section object. **Do not specify step id in it**
+        :return: section id
+        """
+
+        data = self.request(sections.update(token=self.token, section=section))
+        return data["courses"][0]["id"]
 
     def get_units(self, course_id: int, lesson_id: int) -> List[Unit]:
 
         """
-        Gets units in specified course
+        Gets units in specified lesson
 
         :param lesson_id: id of a lesson you want to get units from
         :param course_id: id of a course where that lesson is placed
         :return: list of units
         """
 
-        if not isinstance(course_id, int):
-            raise TypeError('Invalid value for argument: course_id')
+        if not isinstance(course_id, int) or not isinstance(lesson_id, int):
+            raise TypeError("Invalid value for argument")
 
-        data = self.request(units.get(token=self.token, course_id=course_id))
+        data = self.request(units.get(token=self.token, course_id=course_id, lesson_id=lesson_id))
         return list(map(lambda unit: Unit(**unit), data["units"]))
 
-    def create_unit(self):
-        pass
+    def create_unit(self, unit: Unit) -> int:
 
-    def update_unit(self):
-        pass
+        """
+        Creates a new unit in lesson
+
+        :param unit: unit object
+        :return: new unit id
+        """
+
+        data = self.request(units.create(token=self.token, unit=unit))
+        return data["courses"][0]["id"]
+
+    def update_unit(self, unit: Unit) -> int:
+
+        """
+        Updates existing unit
+
+        :param unit: updated unit object. **Do not specify step id in it**
+        :return: unit id
+        """
+
+        data = self.request(units.update(token=self.token, unit=unit))
+        return data["courses"][0]["id"]
 
     def get_lessons(self, course_id: int) -> List[Lesson]:
 
@@ -104,7 +178,7 @@ class Stepik:
         """
 
         if not isinstance(course_id, int):
-            raise TypeError('Invalid value for argument: course_id')
+            raise TypeError("Invalid value for argument: course_id")
 
         data = self.request(lessons.get(self.token))
         return list(map(lambda lesson: Lesson(**lesson), data["lessons"]))
@@ -121,8 +195,17 @@ class Stepik:
         data = self.request(params=lessons.create(token=self.token, lesson=lesson))
         return data["lessons"][0]["id"]
 
-    def update_lesson(self):
-        pass
+    def update_lesson(self, lesson: Lesson) -> int:
+
+        """
+        Updates existing lesson
+
+        :param lesson: updated lesson object. **Do not specify step id in it**
+        :return: lesson id
+        """
+
+        data = self.request(lessons.update(token=self.token, lesson=lesson))
+        return data["lessons"][0]["id"]
 
     def get_steps(self, lesson_id: int) -> List[Step]:
 
@@ -134,7 +217,7 @@ class Stepik:
         """
 
         if not isinstance(lesson_id, int):
-            raise TypeError('Invalid value for argument: course_id')
+            raise TypeError("Invalid value for argument: course_id")
 
         data = self.request(steps.get(token=self.token, lesson_id=lesson_id))
         return list(map(lambda step: Step(**step), data["steps"]))
@@ -151,7 +234,7 @@ class Stepik:
         data = self.request(steps.create(token=self.token, step=step))
         return data["step-sources"][0]["id"]
 
-    def update_step(self, step: Step):
+    def update_step(self, step: Step) -> int:
 
         """
         Updates existing theory step from lesson
