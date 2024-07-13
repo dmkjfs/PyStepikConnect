@@ -10,4 +10,4 @@ class Lesson(BaseModel):
     units: List[int]
 
     class Config:
-        extra = 'ignore'
+        extra = "ignore"
