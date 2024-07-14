@@ -1,12 +1,14 @@
+from typing import Optional
+
 from pystepikconnect.types import Step
 from pystepikconnect.models import RequestParameters
 from pystepikconnect.enums import RequestMethod
 
 
-def get(token: str, lesson_id: int) -> RequestParameters:
+def get(token: str, lesson_id: Optional[int] = None) -> RequestParameters:
     return RequestParameters(
         method=RequestMethod.GET,
-        path="https://stepik.org/api/steps",
+        path="/api/steps",
         params={"lesson": lesson_id},
         headers={"Authorization": f"Bearer {token}"},
     )
