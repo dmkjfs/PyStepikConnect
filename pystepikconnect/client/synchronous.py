@@ -1,5 +1,5 @@
 import requests
-from typing import Union, Optional, List
+from typing import Optional, List
 
 from pystepikconnect.types import Course, Lesson, Unit, Step, Section
 from pystepikconnect.models import RequestParameters
@@ -177,7 +177,7 @@ class SyncStepik:
         :return: list of lessons in course
         """
 
-        if not isinstance(course_id, Union[int, None]):
+        if not isinstance(course_id, int | None):
             raise TypeError("Invalid value for argument: course_id")
 
         data = self.request(lessons.get(self.token, course_id=course_id))
@@ -216,7 +216,7 @@ class SyncStepik:
         :return: list of steps in lesson
         """
 
-        if not isinstance(lesson_id, Union[int, None]):
+        if not isinstance(lesson_id, int | None):
             raise TypeError("Invalid value for argument: course_id")
 
         data = self.request(steps.get(token=self.token, lesson_id=lesson_id))

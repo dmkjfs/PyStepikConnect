@@ -1,7 +1,5 @@
 import pytest
 
-from unittest.mock import AsyncMock
-
 from pystepikconnect.client.synchronous import SyncStepik
 from pystepikconnect.exceptions import AuthorizationError
 

@@ -1,7 +1,7 @@
 import aiohttp
 import requests
 
-from typing import Union, Optional, List
+from typing import Optional, List
 
 from pystepikconnect.types import Course, Lesson, Unit, Step, Section
 from pystepikconnect.models import RequestParameters
@@ -49,7 +49,7 @@ class AsyncStepik:
         async with aiohttp.ClientSession(base_url=self.base_url) as session:
             async with session.request(
                 method=params.method,
-                url=params.path + "?" + "&".join([f"{param}={value}" for param, value in params.params.items()]),
+                url=params.path + "?" + "&".join([f"{param}={value}" for param, value in params.params.items()]) if params.params is not None else '',
                 json=params.data,
                 headers=params.headers
             ) as response:
@@ -178,7 +178,7 @@ class AsyncStepik:
         :return: list of lessons in course
         """
 
-        if not isinstance(course_id, Union[int, None]):
+        if not isinstance(course_id, int | None):
             raise TypeError("Invalid value for argument: course_id")
 
         data = await self.request(lessons.get(self.token))
@@ -217,7 +217,7 @@ class AsyncStepik:
         :return: list of steps in lesson
         """
 
-        if not isinstance(lesson_id, Union[int, None]):
+        if not isinstance(lesson_id, int | None):
             raise TypeError("Invalid value for argument: course_id")
 
         data = await self.request(steps.get(token=self.token, lesson_id=lesson_id))
