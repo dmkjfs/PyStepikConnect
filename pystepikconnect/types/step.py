@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from pystepikconnect.types.block import Block
 
@@ -10,5 +10,4 @@ class Step(BaseModel):
     status: str
     block: Block
 
-    class Config:
-        extra = "ignore"
+    model_config = ConfigDict(extra='ignore')

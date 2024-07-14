@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
 
@@ -13,5 +13,4 @@ class Course(BaseModel):
     first_unit: int
     lessons_count: int
 
-    class Config:
-        extra = "ignore"
+    model_config = ConfigDict(extra='ignore')

@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List
 
 
@@ -7,8 +7,7 @@ class Option(BaseModel):
     text: str
     feedback: str
 
-    class Config:
-        extra = "ignore"
+    model_config = ConfigDict(extra='ignore')
 
 
 class Source(BaseModel):
@@ -20,5 +19,4 @@ class Source(BaseModel):
     preserve_order: bool
     is_options_feedback: bool
 
-    class Config:
-        extra = "ignore"
+    model_config = ConfigDict(extra='ignore')

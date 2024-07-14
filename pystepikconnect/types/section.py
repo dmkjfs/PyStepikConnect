@@ -1,9 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
 
 class Section(BaseModel):
     id: Optional[int] = None
 
-    class Config:
-        extra = "ignore"
+    model_config = ConfigDict(extra='ignore')
