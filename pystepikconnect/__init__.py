@@ -1,2 +1,2 @@
-from pystepikconnect.client.sync import Stepik
-from pystepikconnect.client import asyncio
+from pystepikconnect.client.synchronous import Stepik
+from pystepikconnect.client import asynchronous
