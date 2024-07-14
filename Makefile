@@ -16,3 +16,9 @@ fix:
 
 publish:
 	poetry publish --dry-run
+
+test:
+	poetry run pytest
+
+coverage:
+	poetry run coverage report tests/*.py tests/client/*.py
