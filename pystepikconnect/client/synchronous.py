@@ -1,5 +1,5 @@
 import requests
-from typing import List
+from typing import Union, Optional, List
 
 from pystepikconnect.types import Course, Lesson, Unit, Step, Section
 from pystepikconnect.models import RequestParameters
@@ -167,7 +167,7 @@ class SyncStepik:
         data = self.request(units.update(token=self.token, unit=unit))
         return data["courses"][0]["id"]
 
-    def get_lessons(self, course_id: int) -> List[Lesson]:
+    def get_lessons(self, course_id: Optional[int] = None) -> List[Lesson]:
 
         """
         Gets lessons in specified course
@@ -177,10 +177,10 @@ class SyncStepik:
         :return: list of lessons in course
         """
 
-        if not isinstance(course_id, int):
+        if not isinstance(course_id, Union[int, None]):
             raise TypeError("Invalid value for argument: course_id")
 
-        data = self.request(lessons.get(self.token))
+        data = self.request(lessons.get(self.token, course_id=course_id))
         return list(map(lambda lesson: Lesson(**lesson), data["lessons"]))
 
     def create_lesson(self, lesson: Lesson) -> int:
@@ -207,7 +207,7 @@ class SyncStepik:
         data = self.request(lessons.update(token=self.token, lesson=lesson))
         return data["lessons"][0]["id"]
 
-    def get_steps(self, lesson_id: int) -> List[Step]:
+    def get_steps(self, lesson_id: Optional[int] = None) -> List[Step]:
 
         """
         Gets steps in a specified lesson
@@ -216,7 +216,7 @@ class SyncStepik:
         :return: list of steps in lesson
         """
 
-        if not isinstance(lesson_id, int):
+        if not isinstance(lesson_id, Union[int, None]):
             raise TypeError("Invalid value for argument: course_id")
 
         data = self.request(steps.get(token=self.token, lesson_id=lesson_id))

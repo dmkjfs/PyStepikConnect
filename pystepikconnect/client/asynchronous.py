@@ -1,7 +1,7 @@
 import aiohttp
 import requests
 
-from typing import List
+from typing import Union, Optional, List
 
 from pystepikconnect.types import Course, Lesson, Unit, Step, Section
 from pystepikconnect.models import RequestParameters
@@ -10,6 +10,7 @@ from pystepikconnect.exceptions import AuthorizationError
 
 
 class AsyncStepik:
+
     def __init__(self, client_id: str, client_secret: str) -> None:
 
         """
@@ -37,16 +38,22 @@ class AsyncStepik:
         self.token: str = data["access_token"]
 
     async def request(self, params: RequestParameters) -> dict:
-        async with aiohttp.ClientSession() as session:
+
+        """
+        Asynchronous requesting function. You can use it with any method from official documentation
+        on https://stepik.org/api/docs if that method doesn't exist here
+
+        :param params: all parameters for sending request
+        """
+
+        async with aiohttp.ClientSession(base_url=self.base_url) as session:
             async with session.request(
-                    method=params.method,
-                    url=f"{self.base_url}{'/' if params.path.startswith('') else ''}{params.path}",
-                    params=params.params,
-                    data=params.data,
-                    headers=params.headers,
-                    auth=params.auth
+                method=params.method,
+                url=params.path + "?" + "&".join([f"{param}={value}" for param, value in params.params.items()]),
+                json=params.data,
+                headers=params.headers
             ) as response:
-                return await response.json(encoding='UTF-8')
+                return await response.json()
 
     async def get_courses(self) -> List[Course]:
 
@@ -161,7 +168,7 @@ class AsyncStepik:
         data = await self.request(units.update(token=self.token, unit=unit))
         return data["courses"][0]["id"]
 
-    async def get_lessons(self, course_id: int) -> List[Lesson]:
+    async def get_lessons(self, course_id: Optional[int] = None) -> List[Lesson]:
 
         """
         Gets lessons in specified course
@@ -171,7 +178,7 @@ class AsyncStepik:
         :return: list of lessons in course
         """
 
-        if not isinstance(course_id, int):
+        if not isinstance(course_id, Union[int, None]):
             raise TypeError("Invalid value for argument: course_id")
 
         data = await self.request(lessons.get(self.token))
@@ -201,7 +208,7 @@ class AsyncStepik:
         data = await self.request(lessons.update(token=self.token, lesson=lesson))
         return data["lessons"][0]["id"]
 
-    async def get_steps(self, lesson_id: int) -> List[Step]:
+    async def get_steps(self, lesson_id: Optional[int] = None) -> List[Step]:
 
         """
         Gets steps in a specified lesson
@@ -210,7 +217,7 @@ class AsyncStepik:
         :return: list of steps in lesson
         """
 
-        if not isinstance(lesson_id, int):
+        if not isinstance(lesson_id, Union[int, None]):
             raise TypeError("Invalid value for argument: course_id")
 
         data = await self.request(steps.get(token=self.token, lesson_id=lesson_id))
