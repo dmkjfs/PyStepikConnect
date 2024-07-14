@@ -1,5 +1,7 @@
-from pystepikconnect.types.courses import Course
-from pystepikconnect.types.lessons import Lesson
-from pystepikconnect.types.steps import Step
-from pystepikconnect.types.units import Unit
-from pystepikconnect.types.sections import Section
+from pystepikconnect.types.block import Block, Source
+from pystepikconnect.types.course import Course
+from pystepikconnect.types.lesson import Lesson
+from pystepikconnect.types.section import Section
+from pystepikconnect.types.source import Source, Option
+from pystepikconnect.types.step import Step
+from pystepikconnect.types.unit import Unit

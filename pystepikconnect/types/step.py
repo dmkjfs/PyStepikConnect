@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from pystepikconnect.types.block import Block
 
 
 class Step(BaseModel):
@@ -7,7 +8,7 @@ class Step(BaseModel):
     lesson: int
     position: int
     status: str
-    block: dict
+    block: Block
 
     class Config:
         extra = "ignore"
