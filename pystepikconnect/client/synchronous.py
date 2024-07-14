@@ -7,7 +7,7 @@ from pystepikconnect.core import courses, lessons, steps, sections, units, get_t
 from pystepikconnect.exceptions import AuthorizationError
 
 
-class Stepik:
+class SyncStepik:
     def __init__(self, client_id: str, client_secret: str) -> None:
 
         """
@@ -32,12 +32,12 @@ class Stepik:
             raise AuthorizationError('Incorrect credentials')
 
         data = response.json()
-        self.token = data["access_token"]
+        self.token: str = data["access_token"]
 
     def request(self, params: RequestParameters) -> dict:
 
         """
-        Base requesting function. You can use it with any method from official documentation
+        Synchronous requesting function. You can use it with any method from official documentation
         on https://stepik.org/api/docs if that method doesn't exist here
 
         :param params: all parameters for sending request
