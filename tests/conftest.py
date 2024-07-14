@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import pytest
 
-from unittest.mock import AsyncMock
+from unittest.mock import Mock, AsyncMock
 from os import environ
 
 from pystepikconnect.client.synchronous import SyncStepik
@@ -12,7 +12,12 @@ load_dotenv()
 
 
 @pytest.fixture
-def mock() -> AsyncMock:
+def mock() -> Mock:
+    return Mock()
+
+
+@pytest.fixture
+def async_mock() -> AsyncMock:
     return AsyncMock()
 
 
