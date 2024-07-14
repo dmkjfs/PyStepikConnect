@@ -6,5 +6,5 @@ logger = getLogger("pystepikconnect")
 
 class AuthorizationError(Exception):
     """
-    Invalid credentials
+    Incorrect credentials - `client_id` or `client_secre`
     """
