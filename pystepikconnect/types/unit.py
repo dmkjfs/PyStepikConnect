@@ -1,8 +1,9 @@
 from pydantic import BaseModel, ConfigDict
+from typing import Optional
 
 
 class Unit(BaseModel):
-    id: int
+    id: Optional[int] = None
     section: int
     lesson: int
 

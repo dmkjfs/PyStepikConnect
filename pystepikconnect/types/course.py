@@ -6,11 +6,12 @@ class Course(BaseModel):
     id: Optional[int] = None
     summary: str
     intro: str
+    workload: str
     course_format: str
     description: str
-    total_units: int
-    first_lesson: int
-    first_unit: int
-    lessons_count: int
+    total_units: Optional[int] = None
+    first_lesson: Optional[int] = None
+    first_unit: Optional[int] = None
+    lessons_count: Optional[int] = None
 
     model_config = ConfigDict(extra='ignore')

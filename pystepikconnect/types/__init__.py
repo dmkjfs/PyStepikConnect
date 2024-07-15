@@ -5,3 +5,4 @@ from pystepikconnect.types.section import Section
 from pystepikconnect.types.source import Source, Option
 from pystepikconnect.types.step import Step
 from pystepikconnect.types.unit import Unit
+from pystepikconnect.types.user import User
