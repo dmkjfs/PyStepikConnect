@@ -1,30 +1,30 @@
-from pystepikconnect.models import RequestParameters
+from pystepikconnect.models import RequestParameters, Token
 from pystepikconnect.enums import RequestMethod
 from pystepikconnect.types import Course
 
 
-def get(token: str) -> RequestParameters:
+def get(token: Token, owner_id: int) -> RequestParameters:
     return RequestParameters(
         method=RequestMethod.GET,
         path="/api/courses",
-        params={"is_featured": True},
-        headers={"Authorization": f"Bearer {token}"},
+        params={"owner": owner_id},
+        headers={"Authorization": f"{token.token_type} {token.access_token}"},
     )
 
 
-def create(token: str, course: Course) -> RequestParameters:
+def create(token: Token, course: Course) -> RequestParameters:
     return RequestParameters(
         method=RequestMethod.POST,
         path="/api/courses",
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"{token.token_type} {token.access_token}"},
         data={"course": course.model_dump()}
     )
 
 
-def update(token: str, course: Course) -> RequestParameters:
+def update(token: Token, course: Course) -> RequestParameters:
     return RequestParameters(
         method=RequestMethod.PUT,
         path=f"/api/courses/{course.id}",
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"{token.token_type} {token.access_token}"},
         data={"course": course.model_dump()}
     )
