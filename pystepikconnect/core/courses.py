@@ -1,9 +1,11 @@
+from typing import Optional
+
 from pystepikconnect.models import RequestParameters, Token
 from pystepikconnect.enums import RequestMethod
 from pystepikconnect.types import Course
 
 
-def get(token: Token, owner_id: int) -> RequestParameters:
+def get(token: Token, owner_id: Optional[int] = None) -> RequestParameters:
     return RequestParameters(
         method=RequestMethod.GET,
         path="/api/courses",
