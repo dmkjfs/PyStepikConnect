@@ -10,6 +10,7 @@ update:
 lint:
 	poetry run flake8
 	poetry run mypy -p pystepikconnect
+	poetry run mypy -p tests
 
 fix:
 	poetry run black pystepikconnect
