@@ -43,8 +43,10 @@ Quick start guide and full documentation are available on
 
 - **[pydantic](https://pypi.org/project/pydantic) >= 2.5.0**
 
+<br>
 
-# 💻 For devs
+
+<details><summary><h1>💻 For devs</h1></summary>
 
 ## 🛠 Build commands
 
@@ -112,3 +114,5 @@ See test coverage
 ```bash
 make coverage
 ```
+</details>
+
