@@ -222,7 +222,7 @@ class SyncStepik:
         data = self.request(steps.get(token=self.token.access_token, lesson_id=lesson_id))
         return list(map(lambda step: Step(**step), data["steps"]))
 
-    def add_step(self, step: Step) -> int:
+    def create_step(self, step: Step) -> int:
 
         """
         Adds new theory step to lesson

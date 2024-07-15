@@ -223,7 +223,7 @@ class AsyncStepik:
         data = await self.request(steps.get(token=self.token, lesson_id=lesson_id))
         return list(map(lambda step: Step(**step), data["steps"]))
 
-    async def add_step(self, step: Step) -> int:
+    async def create_step(self, step: Step) -> int:
 
         """
         Adds new theory step to lesson
