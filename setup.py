@@ -29,7 +29,7 @@ setup(
         'License :: OSI Approved :: CC0-1.0 License',
         'Operating System :: OS Independent'
     ],
-    keywords='python stepik library stepik-api',
+    keywords=['python', 'stepik', 'library', 'stepik-api'],
     project_urls={
         'Documentation': 'https://github.com/ilkztsff/PyStepikConnect/wiki',
         'GitHub repo': 'https://github.com/ilkztsff/PyStepikConnect'
