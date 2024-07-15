@@ -15,7 +15,10 @@ setup(
     long_description=readme(),
     long_description_content_type='text/markdown',
     url='https://github.com/ilkztsff/PyStepikConnect',
-    packages=find_packages(),
+    packages=find_packages(
+        where="pystepikconnect",
+        exclude=['tests', '.github', '.git', '.venv', '.vscode', '*cache*', '.idea']
+    ),
     install_requires=[
         'requests>=2.25.1',
         'types-requests>=2',
@@ -26,7 +29,7 @@ setup(
         'License :: OSI Approved :: CC0-1.0 License',
         'Operating System :: OS Independent'
     ],
-    keywords='python stepik',
+    keywords='python stepik library stepik-api',
     project_urls={
         'Documentation': 'https://github.com/ilkztsff/PyStepikConnect/wiki',
         'GitHub repo': 'https://github.com/ilkztsff/PyStepikConnect'
