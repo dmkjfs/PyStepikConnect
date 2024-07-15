@@ -1,35 +1,30 @@
 import pytest
 
-from unittest.mock import Mock
-
 from pystepikconnect.client.asynchronous import AsyncStepik
 from pystepikconnect.exceptions import AuthorizationError
 from pystepikconnect.types import Step, User, Course, Section, Lesson, Unit, Block, Source, Option
 
 
-params = {}
-
-
-@pytest.mark.asyncio
-async def test_auth(client_id: str) -> None:
+@pytest.mark.parametrize("fake_client_secret", ["fake_secret_1", "fake_secret_2"])
+def test_auth(client_id: str, fake_client_secret: str) -> None:
     with pytest.raises(AuthorizationError):
-        AsyncStepik(client_id=client_id, client_secret='')
+        AsyncStepik(client_id=client_id, client_secret=fake_client_secret)
 
 
 @pytest.mark.asyncio
-async def test_get_me(async_stepik: AsyncStepik) -> None:
+async def test_get_me(async_stepik: AsyncStepik) -> int:
     me = await async_stepik.get_me()
     assert isinstance(me, User)
-    params['user'] = me.id
+    return me.id
 
 
 @pytest.mark.asyncio
 async def test_get_user(async_stepik: AsyncStepik) -> None:
-    assert isinstance(await async_stepik.get_user(user_id=params["user"]), User)
+    assert isinstance(await async_stepik.get_user(user_id=await test_get_me(async_stepik=async_stepik)), User)
 
 
 @pytest.mark.asyncio
-async def test_create_course(async_stepik: AsyncStepik) -> None:
+async def test_create_course(async_stepik: AsyncStepik) -> int:
     course = Course(
         summary='summary',
         intro='intro',
@@ -39,12 +34,13 @@ async def test_create_course(async_stepik: AsyncStepik) -> None:
     )
     course_id = await async_stepik.create_course(course=course)
     assert isinstance(course_id, int)
-    params["course"] = course_id
+    return course_id
 
 
 @pytest.mark.asyncio
-async def test_update_course(async_stepik: AsyncStepik) -> None:
+async def test_update_course(async_stepik: AsyncStepik) -> int:
     course = Course(
+        id=await test_create_course(async_stepik=async_stepik),
         summary='summary_',
         intro='intro_',
         workload='workload_',
@@ -53,67 +49,68 @@ async def test_update_course(async_stepik: AsyncStepik) -> None:
     )
     course_id = await async_stepik.update_course(course=course)
     assert isinstance(course_id, int)
-    params["course"] = course_id
+    return course_id
 
 
 @pytest.mark.asyncio
-async def test_create_section(async_stepik: AsyncStepik) -> None:
+async def test_create_section(async_stepik: AsyncStepik) -> int:
     section = Section()
     section_id = await async_stepik.create_section(section=section)
     assert isinstance(section_id, int)
-    params["section"] = section_id
+    return section_id
 
 
 @pytest.mark.asyncio
-async def test_update_section(async_stepik: AsyncStepik, mock: Mock) -> None:
-    section = Section()
+async def test_update_section(async_stepik: AsyncStepik) -> int:
+    section = Section(id=await test_create_section(async_stepik=async_stepik))
     section_id = await async_stepik.update_section(section=section)
     assert isinstance(section_id, int)
-    params["section"] = section_id
+    return section_id
 
 
 @pytest.mark.asyncio
-async def test_create_lesson(async_stepik: AsyncStepik, mock: Mock) -> None:
-    lesson = Lesson(title="title")
+async def test_create_lesson(async_stepik: AsyncStepik) -> int:
+    lesson = Lesson(title="title", courses=[await test_update_course(async_stepik=async_stepik)])
     lesson_id = await async_stepik.create_lesson(lesson=lesson)
     assert isinstance(lesson_id, int)
-    params["lesson"] = lesson_id
+    return lesson_id
 
 
 @pytest.mark.asyncio
-async def test_update_lesson(async_stepik: AsyncStepik, mock: Mock) -> None:
-    lesson = Lesson(title="title_")
+async def test_update_lesson(async_stepik: AsyncStepik) -> int:
+    lesson = Lesson(id=await test_create_lesson(async_stepik=async_stepik), title="title_", courses=[await test_update_course(async_stepik=async_stepik)])
     lesson_id = await async_stepik.update_lesson(lesson=lesson)
     assert isinstance(lesson_id, int)
-    params["lesson"] = lesson_id
+    return lesson_id
 
 
 @pytest.mark.asyncio
-async def test_create_unit(async_stepik: AsyncStepik, mock: Mock) -> None:
+async def test_create_unit(async_stepik: AsyncStepik) -> int:
     unit = Unit(
-        section=params["section"],
-        lesson=params["lesson"],
+        section=await test_update_section(async_stepik=async_stepik),
+        lesson=await test_update_lesson(async_stepik=async_stepik),
     )
     unit_id = await async_stepik.create_unit(unit=unit)
     assert isinstance(unit_id, int)
-    params["unit"] = unit_id
+    return unit_id
 
 
 @pytest.mark.asyncio
-async def test_update_unit(async_stepik: AsyncStepik, mock: Mock) -> None:
+async def test_update_unit(async_stepik: AsyncStepik) -> int:
     unit = Unit(
-        section=params["section"],
-        lesson=params["lesson"],
+        id=await test_create_unit(async_stepik=async_stepik),
+        section=await test_update_section(async_stepik=async_stepik),
+        lesson=await test_update_lesson(async_stepik=async_stepik),
     )
     unit_id = await async_stepik.update_unit(unit=unit)
     assert isinstance(unit_id, int)
-    params["unit"] = unit_id
+    return unit_id
 
 
 @pytest.mark.asyncio
-async def test_create_step(async_stepik: AsyncStepik, mock: Mock) -> None:
+async def test_create_step(async_stepik: AsyncStepik) -> int:
     step = Step(
-        lesson=params["lesson"],
+        lesson=await test_update_lesson(async_stepik=async_stepik),
         position=1,
         status="status",
         block=Block(
@@ -123,13 +120,14 @@ async def test_create_step(async_stepik: AsyncStepik, mock: Mock) -> None:
     )
     step_id = await async_stepik.create_step(step=step)
     assert isinstance(step_id, int)
-    params["step"] = step_id
+    return step_id
 
 
 @pytest.mark.asyncio
-async def test_update_step(async_stepik: AsyncStepik, mock: Mock) -> None:
+async def test_update_step(async_stepik: AsyncStepik) -> int:
     step = Step(
-        lesson=params["lesson"],
+        id=await test_create_step(async_stepik=async_stepik),
+        lesson=await test_update_lesson(async_stepik=async_stepik),
         position=1,
         status="status",
         block=Block(
@@ -152,30 +150,33 @@ async def test_update_step(async_stepik: AsyncStepik, mock: Mock) -> None:
     )
     step_id = await async_stepik.update_step(step=step)
     assert isinstance(step_id, int)
-    params["step"] = step_id
+    return step_id
 
 
 @pytest.mark.asyncio
 async def test_get_courses(async_stepik: AsyncStepik) -> None:
-    courses = await async_stepik.get_courses(owner_id=params["user"])
+    courses = await async_stepik.get_courses(owner_id=await test_get_me(async_stepik=async_stepik))
     assert isinstance(courses, list)
 
 
 @pytest.mark.asyncio
 async def test_get_sections(async_stepik: AsyncStepik) -> None:
-    assert isinstance(await async_stepik.get_sections(course_id=params["course"]), list)
+    assert isinstance(await async_stepik.get_sections(course_id=await test_update_course(async_stepik=async_stepik)), list)
 
 
 @pytest.mark.asyncio
 async def test_get_lessons(async_stepik: AsyncStepik) -> None:
-    assert isinstance(await async_stepik.get_lessons(course_id=params["course"]), list)
+    assert isinstance(await async_stepik.get_lessons(course_id=await test_update_course(async_stepik=async_stepik)), list)
 
 
 @pytest.mark.asyncio
 async def test_get_steps(async_stepik: AsyncStepik) -> None:
-    assert isinstance(await async_stepik.get_steps(lesson_id=params["lesson"]), list)
+    assert isinstance(await async_stepik.get_steps(lesson_id=await test_update_lesson(async_stepik=async_stepik)), list)
 
 
 @pytest.mark.asyncio
 async def test_get_units(async_stepik: AsyncStepik) -> None:
-    assert isinstance(await async_stepik.get_units(lesson_id=params["lesson"], course_id=params["course"]), list)
+    assert isinstance(await async_stepik.get_units(
+        lesson_id=await test_update_lesson(async_stepik=async_stepik),
+        course_id=await test_update_course(async_stepik=async_stepik)
+    ), list)
