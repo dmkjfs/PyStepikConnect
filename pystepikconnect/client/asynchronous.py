@@ -3,9 +3,9 @@ import requests
 
 from typing import Optional, List
 
-from pystepikconnect.types import Course, Lesson, Unit, Step, Section
-from pystepikconnect.models import RequestParameters
-from pystepikconnect.core import courses, lessons, steps, sections, units, get_token
+from pystepikconnect.types import Course, Lesson, Unit, Step, Section, User
+from pystepikconnect.models import RequestParameters, Token
+from pystepikconnect.core import courses, lessons, steps, sections, units, get_token, users, stepics
 from pystepikconnect.exceptions import AuthorizationError
 
 
@@ -14,7 +14,7 @@ class AsyncStepik:
     def __init__(self, client_id: str, client_secret: str) -> None:
 
         """
-        Asynchronous Stepik REST API client
+        Synchronous Stepik REST API client
 
         :param client_id: client id which you can get from one of your applications
         on https://stepik.org/oauth2/applications/
@@ -28,14 +28,14 @@ class AsyncStepik:
         response = requests.post(
             url=str(self.base_url+params.path),
             data=params.data,
-            auth=(client_id, client_secret)
+            auth=params.auth
         )
 
         if response.status_code == 401:
             raise AuthorizationError('Incorrect credentials')
 
         data = response.json()
-        self.token: str = data["access_token"]
+        self.token = Token(**data)
 
     async def request(self, params: RequestParameters) -> dict:
 
@@ -49,21 +49,51 @@ class AsyncStepik:
         async with aiohttp.ClientSession(base_url=self.base_url) as session:
             async with session.request(
                 method=params.method,
-                url=params.path + "?" + "&".join([f"{param}={value}" for param, value in params.params.items()]) if params.params is not None else '',
+                url=params.path + "?" + ("&".join([f"{param}={value}" for param, value in params.params.items()]) if params.params is not None else ''),
                 json=params.data,
                 headers=params.headers
             ) as response:
                 return await response.json()
 
-    async def get_courses(self) -> List[Course]:
+    async def get_user(self, user_id: int) -> User:
 
         """
-        Gets your courses
+        Gets user by id
 
+        :param user_id: user id
+        :return: user object
+        """
+
+        if not isinstance(user_id, int):
+            raise TypeError("Invalid value for argument: user_id")
+
+        data = await self.request(params=users.get(token=self.token, user_id=user_id))
+        return User(**data["users"][0])
+
+    async def get_me(self) -> User:
+
+        """
+        Gets authorized user data
+
+        :return: user object
+        """
+
+        data = await self.request(params=stepics.get(token=self.token))
+        return User(**data["users"][0])
+
+    async def get_courses(self, owner_id: Optional[int] = None) -> List[Course]:
+
+        """
+        Gets courses by specified owner
+
+        :param owner_id: course owner id
         :return: list of courses
         """
 
-        data = await self.request(courses.get(token=self.token))
+        if not isinstance(owner_id, int | None):
+            raise TypeError("Invalid value for argument: owner_id")
+
+        data = await self.request(courses.get(token=self.token, owner_id=owner_id))
         return list(map(lambda course: Course(**course), data["courses"]))
 
     async def create_course(self, course: Course) -> int:
@@ -181,7 +211,7 @@ class AsyncStepik:
         if not isinstance(course_id, int | None):
             raise TypeError("Invalid value for argument: course_id")
 
-        data = await self.request(lessons.get(self.token))
+        data = await self.request(lessons.get(token=self.token, course_id=course_id))
         return list(map(lambda lesson: Lesson(**lesson), data["lessons"]))
 
     async def create_lesson(self, lesson: Lesson) -> int:

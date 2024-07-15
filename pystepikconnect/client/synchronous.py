@@ -1,9 +1,9 @@
 import requests
 from typing import Optional, List
 
-from pystepikconnect.types import Course, Lesson, Unit, Step, Section
+from pystepikconnect.types import Course, Lesson, Unit, Step, Section, User
 from pystepikconnect.models import RequestParameters, Token
-from pystepikconnect.core import courses, lessons, steps, sections, units, get_token
+from pystepikconnect.core import courses, lessons, steps, sections, units, users, stepics, get_token
 from pystepikconnect.exceptions import AuthorizationError
 
 
@@ -25,7 +25,7 @@ class SyncStepik:
         response = requests.post(
             url=str(self.base_url+params.path),
             data=params.data,
-            auth=(client_id, client_secret)
+            auth=params.auth
         )
 
         if response.status_code == 401:
@@ -43,7 +43,7 @@ class SyncStepik:
         :param params: all parameters for sending request
         """
 
-        response = requests.api.request(
+        response = requests.request(
             method=params.method,
             url=f"{self.base_url}{'/' if params.path.startswith('') else ''}{params.path}",
             params=params.params,
@@ -51,18 +51,47 @@ class SyncStepik:
             headers=params.headers,
             auth=params.auth
         )
-
         return response.json()
 
-    def get_courses(self) -> List[Course]:
+    def get_user(self, user_id: int) -> User:
 
         """
-        Gets your courses
+        Gets user by id
 
+        :param user_id: user id
+        :return: user object
+        """
+
+        if not isinstance(user_id, int):
+            raise TypeError("Invalid value for argument: user_id")
+
+        data = self.request(params=users.get(token=self.token, user_id=user_id))
+        return User(**data["users"][0])
+
+    def get_me(self) -> User:
+
+        """
+        Gets authorized user data
+
+        :return: user object
+        """
+
+        data = self.request(params=stepics.get(token=self.token))
+        return User(**data["users"][0])
+
+    def get_courses(self, owner_id: Optional[int] = None) -> List[Course]:
+
+        """
+        Gets courses by specified owner
+
+        :param owner_id: course owner id
         :return: list of courses
         """
 
-        data = self.request(courses.get(token=self.token.access_token))
+        if not isinstance(owner_id, int | None):
+            raise TypeError("Invalid value for argument: owner_id")
+
+        data = self.request(courses.get(token=self.token, owner_id=owner_id))
         return list(map(lambda course: Course(**course), data["courses"]))
 
     def create_course(self, course: Course) -> int:
@@ -74,7 +103,7 @@ class SyncStepik:
         :return: new course id
         """
 
-        data = self.request(courses.create(token=self.token.access_token, course=course))
+        data = self.request(courses.create(token=self.token, course=course))
         return data["courses"][0]["id"]
 
     def update_course(self, course: Course) -> int:
@@ -86,7 +115,7 @@ class SyncStepik:
         :return: course id
         """
 
-        data = self.request(courses.update(token=self.token.access_token, course=course))
+        data = self.request(courses.update(token=self.token, course=course))
         return data["courses"][0]["id"]
 
     def get_sections(self, course_id: int) -> List[Section]:
@@ -100,7 +129,7 @@ class SyncStepik:
         if not isinstance(course_id, int):
             raise TypeError("Invalid value for argument")
 
-        data = self.request(sections.get(token=self.token.access_token, course_id=course_id))
+        data = self.request(sections.get(token=self.token, course_id=course_id))
         return list(map(lambda section: Section(**section), data["sections"]))
 
     def create_section(self, section: Section) -> int:
@@ -112,7 +141,7 @@ class SyncStepik:
         :return: new section id
         """
 
-        data = self.request(sections.create(token=self.token.access_token, section=section))
+        data = self.request(sections.create(token=self.token, section=section))
         return data["sections"][0]["id"]
 
     def update_section(self, section: Section) -> int:
@@ -124,7 +153,7 @@ class SyncStepik:
         :return: section id
         """
 
-        data = self.request(sections.update(token=self.token.access_token, section=section))
+        data = self.request(sections.update(token=self.token, section=section))
         return data["courses"][0]["id"]
 
     def get_units(self, course_id: int, lesson_id: int) -> List[Unit]:
@@ -140,7 +169,7 @@ class SyncStepik:
         if not isinstance(course_id, int) or not isinstance(lesson_id, int):
             raise TypeError("Invalid value for argument")
 
-        data = self.request(units.get(token=self.token.access_token, course_id=course_id, lesson_id=lesson_id))
+        data = self.request(units.get(token=self.token, course_id=course_id, lesson_id=lesson_id))
         return list(map(lambda unit: Unit(**unit), data["units"]))
 
     def create_unit(self, unit: Unit) -> int:
@@ -152,7 +181,7 @@ class SyncStepik:
         :return: new unit id
         """
 
-        data = self.request(units.create(token=self.token.access_token, unit=unit))
+        data = self.request(units.create(token=self.token, unit=unit))
         return data["courses"][0]["id"]
 
     def update_unit(self, unit: Unit) -> int:
@@ -164,7 +193,7 @@ class SyncStepik:
         :return: unit id
         """
 
-        data = self.request(units.update(token=self.token.access_token, unit=unit))
+        data = self.request(units.update(token=self.token, unit=unit))
         return data["courses"][0]["id"]
 
     def get_lessons(self, course_id: Optional[int] = None) -> List[Lesson]:
@@ -180,7 +209,7 @@ class SyncStepik:
         if not isinstance(course_id, int | None):
             raise TypeError("Invalid value for argument: course_id")
 
-        data = self.request(lessons.get(token=self.token.access_token, course_id=course_id))
+        data = self.request(lessons.get(token=self.token, course_id=course_id))
         return list(map(lambda lesson: Lesson(**lesson), data["lessons"]))
 
     def create_lesson(self, lesson: Lesson) -> int:
@@ -192,7 +221,7 @@ class SyncStepik:
         :return: lesson id
         """
 
-        data = self.request(params=lessons.create(token=self.token.access_token, lesson=lesson))
+        data = self.request(params=lessons.create(token=self.token, lesson=lesson))
         return data["lessons"][0]["id"]
 
     def update_lesson(self, lesson: Lesson) -> int:
@@ -204,7 +233,7 @@ class SyncStepik:
         :return: lesson id
         """
 
-        data = self.request(lessons.update(token=self.token.access_token, lesson=lesson))
+        data = self.request(lessons.update(token=self.token, lesson=lesson))
         return data["lessons"][0]["id"]
 
     def get_steps(self, lesson_id: Optional[int] = None) -> List[Step]:
@@ -219,7 +248,7 @@ class SyncStepik:
         if not isinstance(lesson_id, int | None):
             raise TypeError("Invalid value for argument: course_id")
 
-        data = self.request(steps.get(token=self.token.access_token, lesson_id=lesson_id))
+        data = self.request(steps.get(token=self.token, lesson_id=lesson_id))
         return list(map(lambda step: Step(**step), data["steps"]))
 
     def create_step(self, step: Step) -> int:
@@ -231,7 +260,7 @@ class SyncStepik:
         :return: step id
         """
 
-        data = self.request(steps.create(token=self.token.access_token, step=step))
+        data = self.request(steps.create(token=self.token, step=step))
         return data["step-sources"][0]["id"]
 
     def update_step(self, step: Step) -> int:
@@ -243,5 +272,5 @@ class SyncStepik:
         :return: step id
         """
 
-        data = self.request(steps.update(token=self.token.access_token, step=step))
+        data = self.request(steps.update(token=self.token, step=step))
         return data["step-sources"][0]["id"]
