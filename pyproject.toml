@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pystepikconnect"
-version = "0.1.0"
-description = ""
+version = "0.0.1"
+description = "(dev) python library for using Stepik REST API"
 authors = ["Ilya Kuznetsov <ilkztsff@gmail.com>"]
 readme = "README.md"
 
