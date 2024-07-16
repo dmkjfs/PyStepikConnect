@@ -7,7 +7,7 @@ def readme():
 
 
 setup(
-    name='package_name',
+    name='pystepikconnect',
     version='1.0.0',
     author='Ilya Kuznetsov',
     author_email='ilkztsff@gmail.com',
