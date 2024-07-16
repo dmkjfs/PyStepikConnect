@@ -16,7 +16,7 @@ fix:
 	poetry run black pystepikconnect
 
 publish:
-	poetry publish --dry-run
+	poetry publish
 
 test:
 	poetry run pytest
