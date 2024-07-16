@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='pystepikconnect',
-    version='1.0.0',
+    version='0.1.0',
     author='Ilya Kuznetsov',
     author_email='ilkztsff@gmail.com',
     description='Python library for using Stepik API',
