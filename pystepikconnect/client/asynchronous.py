@@ -7,6 +7,7 @@ from pystepikconnect.core import courses, lessons, steps, sections, units, get_t
 from pystepikconnect.exceptions import AuthorizationError, NotFoundError, ForbiddenError, AuthorPermissionError
 from pystepikconnect.models import RequestParameters, Token
 from pystepikconnect.types import Course, Lesson, Unit, Step, Section, User
+from pystepikconnect.utils import dict_to_query
 
 
 class AsyncStepik:
@@ -49,7 +50,7 @@ class AsyncStepik:
         async with aiohttp.ClientSession(base_url=self.base_url) as session:
             async with session.request(
                 method=params.method,
-                url=params.path + "?" + ("&".join([f"{param}={value}" for param, value in params.params.items()]) if params.params is not None else ''),
+                url=params.path + dict_to_query(params.params),
                 json=params.data,
                 headers=params.headers
             ) as response:
