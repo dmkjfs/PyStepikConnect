@@ -22,4 +22,4 @@ test:
 	poetry run pytest
 
 coverage:
-	poetry run coverage report tests/*.py tests/client/*.py
+	poetry run coverage report pystepikconnect/*.py pystepikconnect/*/*.py
