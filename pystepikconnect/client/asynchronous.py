@@ -1,12 +1,12 @@
+from typing import Optional, List
+
 import aiohttp
 import requests
 
-from typing import Optional, List
-
-from pystepikconnect.types import Course, Lesson, Unit, Step, Section, User
-from pystepikconnect.models import RequestParameters, Token
 from pystepikconnect.core import courses, lessons, steps, sections, units, get_token, users, stepics
-from pystepikconnect.exceptions import AuthorizationError
+from pystepikconnect.exceptions import AuthorizationError, NotFoundError, ForbiddenError, AuthorPermissionError
+from pystepikconnect.models import RequestParameters, Token
+from pystepikconnect.types import Course, Lesson, Unit, Step, Section, User
 
 
 class AsyncStepik:
@@ -53,6 +53,14 @@ class AsyncStepik:
                 json=params.data,
                 headers=params.headers
             ) as response:
+
+                if response.status == 401:
+                    raise AuthorizationError("Token expired")
+                elif response.status == 403:
+                    raise ForbiddenError("Not enough permissions")
+                elif response.status == 404:
+                    raise NotFoundError("Not found")
+
                 return await response.json()
 
     async def get_user(self, user_id: int) -> User:
@@ -101,11 +109,15 @@ class AsyncStepik:
         """
         Creates a new course
 
-        :param course: course object
+        :param course: course object. **Do not specify course id in it**
         :return: new course id
         """
 
-        data = await self.request(courses.create(token=self.token, course=course))
+        try:
+            data = await self.request(courses.create(token=self.token, course=course))
+        except ForbiddenError:
+            raise AuthorPermissionError("Authorized user is not allowed to create courses")
+
         return data["courses"][0]["id"]
 
     async def update_course(self, course: Course) -> int:
@@ -113,11 +125,18 @@ class AsyncStepik:
         """
         Updates existing course
 
-        :param course: updated course object. **Do not specify step id in it**
+        :param course: updated course object.
         :return: course id
         """
 
-        data = await self.request(courses.update(token=self.token, course=course))
+        try:
+            data = await self.request(courses.update(token=self.token, course=course))
+        except ForbiddenError:
+            raise AuthorPermissionError("Authorized user is not allowed to create courses \
+                or doesn't have an access to this course")
+        except NotFoundError:
+            raise NotFoundError('Course not found')
+
         return data["courses"][0]["id"]
 
     async def get_sections(self, course_id: int) -> List[Section]:
@@ -139,11 +158,15 @@ class AsyncStepik:
         """
         Creates a section in course
 
-        :param section: section object
+        :param section: section object. **Do not specify section id in it**
         :return: new section id
         """
 
-        data = await self.request(sections.create(token=self.token, section=section))
+        try:
+            data = await self.request(sections.create(token=self.token, section=section))
+        except ForbiddenError:
+            raise AuthorPermissionError("Authorized user is not allowed to create courses")
+
         return data["sections"][0]["id"]
 
     async def update_section(self, section: Section) -> int:
@@ -151,11 +174,18 @@ class AsyncStepik:
         """
         Updates existing section
 
-        :param section: updated section object. **Do not specify step id in it**
+        :param section: updated section object.
         :return: section id
         """
 
-        data = await self.request(sections.update(token=self.token, section=section))
+        try:
+            data = await self.request(sections.update(token=self.token, section=section))
+        except ForbiddenError:
+            raise AuthorPermissionError("Authorized user is not allowed to create courses \
+                or doesn't have an access to this course")
+        except NotFoundError:
+            raise NotFoundError('Section not found')
+
         return data["courses"][0]["id"]
 
     async def get_units(self, course_id: int, lesson_id: int) -> List[Unit]:
@@ -179,11 +209,16 @@ class AsyncStepik:
         """
         Creates a new unit in lesson
 
-        :param unit: unit object
+        :param unit: unit object. **Do not specify unit id in it**
         :return: new unit id
         """
 
-        data = await self.request(units.create(token=self.token, unit=unit))
+        try:
+            data = await self.request(units.create(token=self.token, unit=unit))
+        except ForbiddenError:
+            raise AuthorPermissionError("Authorized user is not allowed to create courses \
+                or doesn't have an access to this course")
+
         return data["courses"][0]["id"]
 
     async def update_unit(self, unit: Unit) -> int:
@@ -191,11 +226,18 @@ class AsyncStepik:
         """
         Updates existing unit
 
-        :param unit: updated unit object. **Do not specify step id in it**
+        :param unit: updated unit object.
         :return: unit id
         """
 
-        data = await self.request(units.update(token=self.token, unit=unit))
+        try:
+            data = await self.request(units.update(token=self.token, unit=unit))
+        except ForbiddenError:
+            raise AuthorPermissionError("Authorized user is not allowed to create courses \
+                or doesn't have an access to this course")
+        except NotFoundError:
+            raise NotFoundError('Unit not found')
+
         return data["courses"][0]["id"]
 
     async def get_lessons(self, course_id: Optional[int] = None) -> List[Lesson]:
@@ -223,7 +265,12 @@ class AsyncStepik:
         :return: lesson id
         """
 
-        data = await self.request(params=lessons.create(token=self.token, lesson=lesson))
+        try:
+            data = await self.request(lessons.create(token=self.token, lesson=lesson))
+        except ForbiddenError:
+            raise AuthorPermissionError("Authorized user is not allowed to create courses \
+                or doesn't have an access to this course")
+
         return data["lessons"][0]["id"]
 
     async def update_lesson(self, lesson: Lesson) -> int:
@@ -231,11 +278,18 @@ class AsyncStepik:
         """
         Updates existing lesson
 
-        :param lesson: updated lesson object. **Do not specify step id in it**
+        :param lesson: updated lesson object
         :return: lesson id
         """
 
-        data = await self.request(lessons.update(token=self.token, lesson=lesson))
+        try:
+            data = await self.request(lessons.update(token=self.token, lesson=lesson))
+        except ForbiddenError:
+            raise AuthorPermissionError("Authorized user is not allowed to create courses \
+                or doesn't have an access to this course")
+        except NotFoundError:
+            raise NotFoundError('Lesson not found')
+
         return data["lessons"][0]["id"]
 
     async def get_steps(self, lesson_id: Optional[int] = None) -> List[Step]:
@@ -262,7 +316,12 @@ class AsyncStepik:
         :return: step id
         """
 
-        data = await self.request(steps.create(token=self.token, step=step))
+        try:
+            data = await self.request(steps.create(token=self.token, step=step))
+        except ForbiddenError:
+            raise AuthorPermissionError("Authorized user is not allowed to create courses \
+                or doesn't have an access to this course")
+
         return data["step-sources"][0]["id"]
 
     async def update_step(self, step: Step) -> int:
@@ -270,9 +329,16 @@ class AsyncStepik:
         """
         Updates existing theory step from lesson
 
-        :param step: updated step object. **Do not specify step id in it**
+        :param step: updated step object
         :return: step id
         """
 
-        data = await self.request(steps.update(token=self.token, step=step))
+        try:
+            data = await self.request(steps.update(token=self.token, step=step))
+        except ForbiddenError:
+            raise AuthorPermissionError("Authorized user is not allowed to create courses \
+                or doesn't have an access to this course")
+        except NotFoundError:
+            raise NotFoundError('Step not found')
+
         return data["step-sources"][0]["id"]
