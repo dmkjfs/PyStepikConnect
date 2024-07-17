@@ -1,4 +1,3 @@
-import json
 from typing import Optional, List
 
 import aiohttp
@@ -28,7 +27,7 @@ class AsyncStepik:
 
         response = requests.post(
             url=str(self.base_url+params.path),
-            data=json.dumps(params.data),
+            data=params.data,
             auth=params.auth
         )
 
@@ -51,7 +50,7 @@ class AsyncStepik:
             async with session.request(
                 method=params.method,
                 url=params.path + dict_to_query(params.params),
-                json=json.dumps(params.data),
+                json=params.data,
                 headers=params.headers
             ) as response:
 

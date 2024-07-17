@@ -1,9 +1,8 @@
-import json
 from typing import Optional, List
 
 import requests
 
-from pystepikconnect.core import courses, lessons, steps, sections, units, users, stepics, auth
+from pystepikconnect.core import courses, lessons, steps, sections, units, users, auth, stepics
 from pystepikconnect.exceptions import AuthorizationError, AuthorPermissionError, ForbiddenError, NotFoundError
 from pystepikconnect.models import RequestParameters, Token
 from pystepikconnect.types import Course, Lesson, Unit, Step, Section, User
@@ -22,11 +21,11 @@ class SyncStepik:
         """
 
         self.base_url = "https://stepik.org"
-        params = auth.get_token(client_id, client_secret)
+        params = auth.get_token(client_id=client_id, client_secret=client_secret)
 
         response = requests.post(
             url=str(self.base_url+params.path),
-            data=json.dumps(params.data),
+            data=params.data,
             auth=params.auth
         )
 
@@ -49,7 +48,7 @@ class SyncStepik:
             method=params.method,
             url=f"{self.base_url}{'/' if params.path.startswith('') else ''}{params.path}",
             params=params.params,
-            data=json.dumps(params.data),
+            data=params.data,
             headers=params.headers,
             auth=params.auth
         )
