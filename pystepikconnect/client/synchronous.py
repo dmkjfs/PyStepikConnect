@@ -1,15 +1,15 @@
+import json
 from typing import Optional, List
 
 import requests
 
-from pystepikconnect.core import courses, lessons, steps, sections, units, users, stepics, get_token
+from pystepikconnect.core import courses, lessons, steps, sections, units, users, stepics, auth
 from pystepikconnect.exceptions import AuthorizationError, AuthorPermissionError, ForbiddenError, NotFoundError
 from pystepikconnect.models import RequestParameters, Token
 from pystepikconnect.types import Course, Lesson, Unit, Step, Section, User
 
 
 class SyncStepik:
-
     def __init__(self, client_id: str, client_secret: str) -> None:
 
         """
@@ -22,11 +22,11 @@ class SyncStepik:
         """
 
         self.base_url = "https://stepik.org"
-        params = get_token(client_id, client_secret)
+        params = auth.get_token(client_id, client_secret)
 
         response = requests.post(
             url=str(self.base_url+params.path),
-            data=params.data,
+            data=json.dumps(params.data),
             auth=params.auth
         )
 
@@ -39,7 +39,7 @@ class SyncStepik:
     def request(self, params: RequestParameters) -> dict:
 
         """
-        Synchronous requesting function. You can use it with any method from official documentation
+        Synchronous requesting method. You can use it with any method from official documentation
         on https://stepik.org/api/docs if that method doesn't exist here
 
         :param params: all parameters for sending request
@@ -49,7 +49,7 @@ class SyncStepik:
             method=params.method,
             url=f"{self.base_url}{'/' if params.path.startswith('') else ''}{params.path}",
             params=params.params,
-            data=params.data,
+            data=json.dumps(params.data),
             headers=params.headers,
             auth=params.auth
         )

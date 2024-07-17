@@ -1,9 +1,10 @@
+import json
 from typing import Optional, List
 
 import aiohttp
 import requests
 
-from pystepikconnect.core import courses, lessons, steps, sections, units, get_token, users, stepics
+from pystepikconnect.core import courses, lessons, steps, sections, units, auth, users, stepics
 from pystepikconnect.exceptions import AuthorizationError, NotFoundError, ForbiddenError, AuthorPermissionError
 from pystepikconnect.models import RequestParameters, Token
 from pystepikconnect.types import Course, Lesson, Unit, Step, Section, User
@@ -11,7 +12,6 @@ from pystepikconnect.utils import dict_to_query
 
 
 class AsyncStepik:
-
     def __init__(self, client_id: str, client_secret: str) -> None:
 
         """
@@ -24,11 +24,11 @@ class AsyncStepik:
         """
 
         self.base_url = "https://stepik.org"
-        params = get_token(client_id, client_secret)
+        params = auth.get_token(client_id, client_secret)
 
         response = requests.post(
             url=str(self.base_url+params.path),
-            data=params.data,
+            data=json.dumps(params.data),
             auth=params.auth
         )
 
@@ -51,7 +51,7 @@ class AsyncStepik:
             async with session.request(
                 method=params.method,
                 url=params.path + dict_to_query(params.params),
-                json=params.data,
+                json=json.dumps(params.data),
                 headers=params.headers
             ) as response:
 
