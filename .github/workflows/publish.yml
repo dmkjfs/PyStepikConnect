@@ -22,5 +22,7 @@ jobs:
           installer-parallel: true
       - name: Install dependencies
         run: poetry install
+      - name: Add pypi token
+        run: poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
       - name: Publish
-        run: poetry publish --dry-run
+        run: poetry publish
