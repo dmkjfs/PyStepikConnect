@@ -27,6 +27,7 @@ def test_get_user(stepik: SyncStepik, me: User) -> None:
 
 def test_create_course(stepik: SyncStepik) -> None:
     course = Course(
+        title='title',
         summary='summary',
         intro='intro',
         workload='workload',
@@ -40,6 +41,7 @@ def test_create_course(stepik: SyncStepik) -> None:
 @pytest.fixture
 def _course_id(stepik: SyncStepik) -> int:
     course = Course(
+        title='title',
         summary='summary',
         intro='intro',
         workload='workload',
@@ -53,6 +55,7 @@ def _course_id(stepik: SyncStepik) -> int:
 def test_update_course(stepik: SyncStepik, _course_id: int) -> None:
     course = Course(
         id=_course_id,
+        title='title_',
         summary='summary_',
         intro='intro_',
         workload='workload_',
@@ -67,11 +70,12 @@ def test_update_course(stepik: SyncStepik, _course_id: int) -> None:
 def course_id(stepik: SyncStepik, _course_id: int) -> int:
     course = Course(
         id=_course_id,
-        summary='summary',
-        intro='intro',
-        workload='workload',
-        course_format='format',
-        description='description'
+        title='title_',
+        summary='summary_',
+        intro='intro_',
+        workload='workload_',
+        course_format='format_',
+        description='description_'
     )
     course_id = stepik.update_course(course=course)
     return course_id

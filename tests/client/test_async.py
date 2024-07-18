@@ -31,6 +31,7 @@ async def test_get_user(async_stepik: AsyncStepik, me: User) -> None:
 @pytest.mark.asyncio
 async def test_create_course(async_stepik: AsyncStepik) -> None:
     course = Course(
+        title='title',
         summary='summary',
         intro='intro',
         workload='workload',
@@ -44,6 +45,7 @@ async def test_create_course(async_stepik: AsyncStepik) -> None:
 @pytest.fixture
 def _course_id(stepik: SyncStepik) -> int:
     course = Course(
+        title='title',
         summary='summary',
         intro='intro',
         workload='workload',
@@ -58,6 +60,7 @@ def _course_id(stepik: SyncStepik) -> int:
 async def test_update_course(stepik: SyncStepik, _course_id: int) -> None:
     course = Course(
         id=_course_id,
+        title='title_',
         summary='summary_',
         intro='intro_',
         workload='workload_',
@@ -72,11 +75,12 @@ async def test_update_course(stepik: SyncStepik, _course_id: int) -> None:
 def course_id(stepik: SyncStepik, _course_id: int) -> int:
     course = Course(
         id=_course_id,
-        summary='summary',
-        intro='intro',
-        workload='workload',
-        course_format='format',
-        description='description'
+        title='title_',
+        summary='summary_',
+        intro='intro_',
+        workload='workload_',
+        course_format='format_',
+        description='description_'
     )
     course_id = stepik.update_course(course=course)
     return course_id
