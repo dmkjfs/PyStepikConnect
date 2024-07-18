@@ -3,7 +3,7 @@
       <img src="https://img.shields.io/github/license/ilkztsff/PyStepikConnect?label=License&color=purple&style=for-the-badge">
     </a>
     <a href="https://github.com/ilkztsff/PyStepikConnect/blob/dev/pyproject.toml">
-      <img src="https://img.shields.io/badge/python-3.7+-purple?style=for-the-badge">
+      <img src="https://img.shields.io/badge/python-3.8+-purple?style=for-the-badge">
     </a>
     <a href="https://github.com/ilkztsff/PyStepikConnect/actions/workflows/check.yml">
       <img src="https://img.shields.io/github/actions/workflow/status/ilkztsff/PyStepikConnect/check.yml?branch=dev&style=for-the-badge&label=linter&color=purple">

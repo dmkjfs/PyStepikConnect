@@ -6,7 +6,7 @@ authors = ["Ilya Kuznetsov <ilkztsff@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 requests = "^2.32.3"
 types-requests = "^2.32.0.20240622"
 pydantic = "^2.8.2"
