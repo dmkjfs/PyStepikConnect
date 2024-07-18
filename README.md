@@ -8,6 +8,9 @@
     <a href="https://github.com/ilkztsff/PyStepikConnect/actions/workflows/check.yml">
       <img src="https://img.shields.io/github/actions/workflow/status/ilkztsff/PyStepikConnect/check.yml?branch=dev&style=for-the-badge&label=linter&color=purple">
     </a>
+    <a href="https://github.com/ilkztsff/PyStepikConnect/actions/workflows/publish.yml">
+      <img src="https://img.shields.io/github/actions/workflow/status/ilkztsff/PyStepikConnect/publish.yml?branch=dev&event=push&style=for-the-badge&label=build&color=purple">
+    </a>
 </div>
 
 <h1 align="center">PyStepikConnect</h1>
@@ -15,9 +18,7 @@
 
 ## ✍ About
 
-PyStepikConnect is a python library for using Stepik REST API. You can see
-project documentation [here](https://github.com/ilkztsff/PyStepikConnect/wiki).
-Stepik REST API documentation - [here](https://stepik.org/api/docs)
+PyStepikConnect is a python library for using Stepik REST API. You can see Stepik REST API documentation - [here](https://stepik.org/api/docs)
 
 
 ## ⬇️ Installation
