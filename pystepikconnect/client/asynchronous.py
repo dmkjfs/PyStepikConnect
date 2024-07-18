@@ -23,7 +23,7 @@ class AsyncStepik:
         """
 
         self.base_url = "https://stepik.org"
-        params = auth.get_token(client_id, client_secret)
+        params = auth.get_token(client_id=client_id, client_secret=client_secret)
 
         response = requests.post(
             url=str(self.base_url+params.path),

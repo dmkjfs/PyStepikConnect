@@ -21,18 +21,12 @@ class SyncStepik:
         """
 
         self.base_url = "https://stepik.org"
-        params = auth.get_token(client_id=client_id, client_secret=client_secret)
 
-        response = requests.post(
-            url=str(self.base_url+params.path),
-            data=params.data,
-            auth=params.auth
-        )
-
-        if response.status_code == 401:
+        try:
+            data = self.request(params=auth.get_token(client_id=client_id, client_secret=client_secret))
+        except AuthorizationError:
             raise AuthorizationError('Incorrect credentials')
 
-        data = response.json()
         self.token = Token(**data)
 
     def request(self, params: RequestParameters) -> dict:
@@ -54,7 +48,7 @@ class SyncStepik:
         )
 
         if response.status_code == 401:
-            raise AuthorizationError("Token expired")
+            raise AuthorizationError("Authorization failed")
         elif response.status_code == 403:
             raise ForbiddenError("Not enough permissions")
         elif response.status_code == 404:
