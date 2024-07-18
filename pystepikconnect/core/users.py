@@ -1,5 +1,5 @@
-from pystepikconnect.models import RequestParameters, Token
 from pystepikconnect.enums import RequestMethod
+from pystepikconnect.models import RequestParameters, Token
 
 
 def get(token: Token, user_id: int) -> RequestParameters:
