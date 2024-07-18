@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "pystepikconnect"
-version = "0.0.1"
+version = "0.0.2"
 description = "(dev) python library for using Stepik REST API"
 authors = ["Ilya Kuznetsov <ilkztsff@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.7"
 requests = "^2.32.3"
 types-requests = "^2.32.0.20240622"
 pydantic = "^2.8.2"
@@ -26,22 +26,3 @@ parameterized = "^0.9.0"
 [build-system]
 requires = ["poetry-core", "requests", "aiohttp", "pydantic", "types-requests", "jmespath"]
 build-backend = "poetry.core.masonry.api"
-
-[project]
-name = "pystepikconnect"
-version = "0.0.1"
-authors = [
-  { name="Ilya Kuznetsov", email="ilkztsff@gmail.com" },
-]
-description = "(dev) python library for using Stepik REST API"
-readme = "README.md"
-requires-python = ">=3.8"
-classifiers = [
-    "Programming Language :: Python :: 3.7",
-    "License :: OSI Approved :: CC0-1.0 License",
-    "Operating System :: OS Independent",
-]
-
-[project.urls]
-Homepage = "https://github.com/ilkztsff/PyStepikConnect"
-Documentation = "https://github.com/ilkztsff/PyStepikConnect/wiki"
