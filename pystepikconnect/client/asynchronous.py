@@ -98,7 +98,7 @@ class AsyncStepik:
         :return: list of courses
         """
 
-        if not isinstance(owner_id, int | None):
+        if not isinstance(owner_id, int) and owner_id is not None:
             raise TypeError("Invalid value for argument: owner_id")
 
         data = await self.request(courses.get(token=self.token, owner_id=owner_id))
@@ -250,7 +250,7 @@ class AsyncStepik:
         :return: list of lessons in course
         """
 
-        if not isinstance(course_id, int | None):
+        if not isinstance(course_id, int) and course_id is not None:
             raise TypeError("Invalid value for argument: course_id")
 
         data = await self.request(lessons.get(token=self.token, course_id=course_id))
@@ -301,7 +301,7 @@ class AsyncStepik:
         :return: list of steps in lesson
         """
 
-        if not isinstance(lesson_id, int | None):
+        if not isinstance(lesson_id, int) and lesson_id is not None:
             raise TypeError("Invalid value for argument: course_id")
 
         data = await self.request(steps.get(token=self.token, lesson_id=lesson_id))
