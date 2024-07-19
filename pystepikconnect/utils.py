@@ -1,7 +1,5 @@
 from typing import Union
 
-from pydantic import BaseModel
-
 
 def dict_to_query(params: Union[dict, None]) -> str:
 

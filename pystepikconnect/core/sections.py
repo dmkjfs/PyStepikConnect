@@ -18,6 +18,7 @@ def get(token: Token, course_id: int) -> RequestParameters:
 def create(token: Token, section: Section) -> RequestParameters:
     return RequestParameters(
         method=RequestMethod.POST,
+        path="/api/sections/",
         headers={
             "Authorization": f"{token.token_type} {token.access_token}",
             "Content-Type": "application/json"
