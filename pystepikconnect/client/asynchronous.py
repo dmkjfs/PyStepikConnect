@@ -55,7 +55,7 @@ class AsyncStepik:
             ) as response:
 
                 if response.status == 401:
-                    raise AuthorizationError("Token expired")
+                    raise AuthorizationError("Authorization failed")
                 elif response.status == 403:
                     raise ForbiddenError("Not enough permissions")
                 elif response.status == 404:
