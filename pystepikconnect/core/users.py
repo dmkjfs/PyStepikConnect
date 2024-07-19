@@ -6,5 +6,8 @@ def get(token: Token, user_id: int) -> RequestParameters:
     return RequestParameters(
         method=RequestMethod.GET,
         path=f"/api/users/{user_id}",
-        headers={"Authorization": f"{token.token_type} {token.access_token}"}
+        headers={
+            "Authorization": f"{token.token_type} {token.access_token}",
+            "Content-Type": "application/json"
+        }
     )
