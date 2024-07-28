@@ -3,11 +3,14 @@ from pystepikconnect.models import RequestParameters, Token
 from pystepikconnect.types import Section
 
 
-def get(token: Token, course_id: int) -> RequestParameters:
+def get(token: Token, course_id: int, page: int = 1) -> RequestParameters:
     return RequestParameters(
         method=RequestMethod.GET,
         path="/api/sections",
-        params={"course": course_id},
+        params={
+            "course": course_id,
+            "page": page
+        },
         headers={
             "Authorization": f"{token.token_type} {token.access_token}",
             "Content-Type": "application/json"

@@ -5,11 +5,14 @@ from pystepikconnect.models import RequestParameters, Token
 from pystepikconnect.types import Step
 
 
-def get(token: Token, lesson_id: Optional[int] = None) -> RequestParameters:
+def get(token: Token, lesson_id: Optional[int] = None, page: int = 1) -> RequestParameters:
     return RequestParameters(
         method=RequestMethod.GET,
         path="/api/steps",
-        params={"lesson": lesson_id},
+        params={
+            "lesson": lesson_id,
+            "page": page
+        },
         headers={
             "Authorization": f"{token.token_type} {token.access_token}",
             "Content-Type": "application/json"
