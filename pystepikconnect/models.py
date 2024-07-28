@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 
 from pydantic import BaseModel, ConfigDict
 from requests.auth import HTTPBasicAuth
@@ -23,3 +23,14 @@ class Token(BaseModel):
     expires_in: int
 
     model_config = ConfigDict(extra='ignore')
+
+
+class Meta(BaseModel):
+    page: int
+    has_next: bool
+    has_previous: bool
+
+
+class Response(BaseModel):
+    meta: Meta
+    requested: Optional[Any] = None
